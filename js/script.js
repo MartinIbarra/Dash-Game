@@ -34,6 +34,10 @@ var player = {
 
 player.forward = function(){
 	player.x += 3;
+	if(player.x === canvas.width){
+		player.x = 0;
+		player.y = 0;
+	}
 };
 
 player.jump = function(){
