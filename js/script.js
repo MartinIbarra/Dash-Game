@@ -6,7 +6,7 @@
 # texturas del juego
 # obstaculos
 # dificultad
-# perfeción
+# perfección
 
 */
 var canvas = null,
@@ -22,21 +22,41 @@ var keyBoard = {
 var floorH = null;
 
 var player = {
-	imgURL: 'assets/img/ncage.jpg',
+	imgURL: 'assets/img/ncage.png',
 	imgOk: false,
 	x:0,
 	y:0,
 	h: null,	// canvas.width * 4 / 100,
 	w: null,	// canvas.width * 4 / 100,
 	inMove: false,
-	jumpStr: 10,
+	jumpStr: 10
+};
+
+var obstacle = {
+	x: 0,
+	y: 0,
+	h: 0,
+	w: 0
+};
+
+function resize(){
+	var w = window.innerWidth / canvas.width;
+	var h = window.innerHeight / canvas.height; 
+	var scale = Math.min(h, w);
+	
+	canvas.style.width = (canvas.width * scale) + 'px';
+	canvas.style.height = (canvas.height * scale) + 'px';
+}
+
+player.resetPosition = function (){
+	player.x = 0;
+	player.y = 0;
 };
 
 player.forward = function(){
 	player.x += 3;
 	if(player.x === canvas.width){
-		player.x = 0;
-		player.y = 0;
+		player.resetPosition();
 	}
 };
 
@@ -59,6 +79,9 @@ function drawFloor(ctx){
 	floorH = (canvas.height / 3) * 2;
 	ctx.fillStyle = '#00f';
     ctx.fillRect(0, floorH, canvas.width, floorH);
+
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(canvas.width / 2 , 50, 25, floorH / 3);
 }
 
 function paint(ctx){
@@ -73,7 +96,7 @@ function loop(){
 	requestAnimationFrame(loop);
 	player.fall();
 	player.forward();
-
+	
 	paint(ctx);
 }
 
@@ -97,9 +120,11 @@ function init(){
 }
 
 function keyUp(e){
+	/*
 	if(e.keyCode === keyBoard.up){
-		inMove = false;
+		player.inMove = false;		<-- esto esta mal! 
 	}
+	*/
 }
 
 function keyDown(e){
@@ -112,6 +137,7 @@ function keyDown(e){
 }
 
 window.addEventListener('load', init, false);
+window.addEventListener('resize', resize, false);
 window.addEventListener('keydown', keyDown, false);
 window.addEventListener('keyup', keyUp, false);
 
