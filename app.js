@@ -9,7 +9,7 @@ var folders = [];
 
 function uploadHtml(htmlFolder){
 	htmlFolder.forEach(function (e){
-		app.use( e , express.static(__dirname + e))
+		app.use( e , express.static(__dirname + e));
 	});
 }
 
