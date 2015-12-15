@@ -9,7 +9,7 @@
 # perfección
 
 */
-var canvas = null,
+var canvas = document.getElementById('c'),
 	ctx = null;
 
 var gravity = 1,
@@ -32,13 +32,6 @@ var player = {
 	jumpStr: 10
 };
 
-var obstacle = {
-	x: 0,
-	y: 0,
-	h: 0,
-	w: 0
-};
-
 function resize(){
 	var w = window.innerWidth / canvas.width;
 	var h = window.innerHeight / canvas.height; 
@@ -48,16 +41,44 @@ function resize(){
 	canvas.style.height = (canvas.height * scale) + 'px';
 }
 
+var z = randomX(canvas.width - 5);
+
+var obstacle = {
+	w: 5,
+	h: 5,
+	y: 95,
+	x: z,
+};
+
+player.colision = function(){
+	var vc = false;
+
+	var dx = player.x + player.w;
+	var dy = player.y + player.h;
+	
+	var ox = obstacle.x + obstacle.w;
+	var oy = obstacle.y + obstacle.h;
+
+	if(dx >= obstacle.x && dx <= ox && dy >= obstacle.y && dy <= oy){
+		vc = true;
+	}
+
+	return vc;
+};
+
 player.resetPosition = function (){
 	player.x = 0;
 	player.y = 0;
 };
 
 player.forward = function(){
-	player.x += 3;
+	if(player.colision()){
+		player.resetPosition();
+	}
 	if(player.x === canvas.width){
 		player.resetPosition();
 	}
+	player.x += 2;
 };
 
 player.jump = function(){
@@ -79,24 +100,30 @@ function drawFloor(ctx){
 	floorH = (canvas.height / 3) * 2;
 	ctx.fillStyle = '#00f';
     ctx.fillRect(0, floorH, canvas.width, floorH);
-
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(canvas.width / 2 , 50, 25, floorH / 3);
 }
+
+obstacle.drawObstacle = function(ctx){
+	ctx.fillStyle = "#fff";
+    ctx.fillRect(obstacle.x , obstacle.y, obstacle.w, obstacle.h);
+};
 
 function paint(ctx){
 	ctx.fillStyle = '#000';
 	ctx.fillRect(0,0, canvas.width, canvas.height);
 
-	ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
 	drawFloor(ctx);
+	ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
+	obstacle.drawObstacle(ctx);
 }
 
 function loop(){
 	requestAnimationFrame(loop);
 	player.fall();
 	player.forward();
-	
+	console.clear();
+	console.log('player: '+ player.x);
+	console.log('obstacle: '+obstacle.x);
+
 	paint(ctx);
 }
 
@@ -106,10 +133,10 @@ function confirmarPlayer(){
 }
 
 function init(){
-	canvas = document.getElementById('c');
+	
 	ctx = canvas.getContext('2d');
 
-	player.h = canvas.width * 4 / 100;
+	player.h = 25; //canvas.width * 4 / 100;
 	player.w = canvas.width * 4 / 100;
 
 	player.img = new Image();
@@ -117,6 +144,24 @@ function init(){
 	player.onload = confirmarPlayer;
 
 	loop();
+}
+
+function randomX(max) {
+	var maxim = Math.random() * max;
+	if(maxim <= 20 && maxim === 0){
+		maxim = Math.random() * max;
+	} else {
+		return maxim.toFixed(0);
+	}
+}
+
+function randomY(max) {
+	var maxim = Math.random() * max;
+	if(maxim <= 60){
+		maxim = Math.random() * max;
+	} else {
+		return maxim.toFixed(0);
+	}
 }
 
 function keyUp(e){
