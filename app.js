@@ -4,7 +4,7 @@ var express = require('express'),
 	fs = require('fs'),
 	app = express();
 
-var port = 8080;
+var port = 80;
 var folders = [];
 
 function uploadHtml(htmlFolder){
